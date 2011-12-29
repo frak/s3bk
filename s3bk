@@ -1,0 +1,68 @@
+#!/usr/bin/env php
+<?php
+
+require_once 'Core/Autoloader.php';
+
+$user = get_current_user();
+
+$mountsConf = 'conf/mounts';
+if(file_exists($mountsConf)) {
+    $mounts = unserialize(file_get_contents($mountsConf));
+} else {
+    mkdir('conf');
+    $mounts = array();
+}
+
+$command = null;
+if(!isset($argv[1])) {
+    die("Usage:\n" . __FILE__ . " command (parameters)\nTo see available commands use the command 'help'\n");
+}
+
+switch($argv[1]) {
+    case 'list':
+        $command = new \Command\ListMounts();
+        $command->setKey('mounts', $mounts);
+        break;
+    case 'mount':
+        if(4 === count($argv) || 5 === count($argv)) {
+            if(isset($mounts[$argv[3]])) {
+                die("Mount point '{$argv[3]}' already exists\n");
+            }
+            $command = new \Command\Mount();
+            $command->setKey('name', $argv[3]);
+            $command->setKey('user', $user);
+            $mounts[$argv[3]] = array(
+                'path' => $argv[2],
+                'type' => (isset($argv[4])) ? $argv[4] : 'backup'
+            );
+            file_put_contents($mountsConf, serialize($mounts));
+        } else {
+            die("Usage:\n" . __FILE__ . " mount /path/to/mount name\n");
+        }
+        break;
+    case 'backup':
+        if(3 === count($argv)) {
+            if(in_array($argv[2], array_keys($mounts))) {
+                $command = new \Command\Backup();
+                $command->setKey('name', $argv[2]);
+                $command->setKey('path', $mounts[$argv[2]]['path']);
+                $command->setKey('user', $user);
+            } else {
+                die("Mount '{$argv[2]}' does not exist");
+            }
+        } else {
+            die("Usage:\n" . __FILE__ . " backup name\n");
+        }
+        break;
+    case 'help':
+    default:
+        $command = new \Command\Help();
+        if(3 === count($argv)) {
+            $command->setKey('command', $argv[2]);
+        } else {
+            $command->setKey('command', 'all');
+        }
+        break;
+}
+
+$command->run();
