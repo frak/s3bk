@@ -84,7 +84,7 @@ class Backup extends \Core\Command
                 echo PHP_EOL;
             }
             return true;
-        } catch (RequestCore_Exception $e) {
+        } catch (\RequestCore_Exception $e) {
             return false;
         }
     }
