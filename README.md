@@ -36,10 +36,15 @@ Once installed, you will need to configure your account details by creating the 
 Once you have done this, you are able to run the following commands:
 
 `./s3bk list` Shows you a list of currently defined mount points
+
 `./s3bk mount /path/to/mount name` Creates a mount point called 'name' at /path/to/mount
+
 `./s3bk remove name [force]` Deletes a mount point from Amazon, you can optionally specify 'force' as the last argument to force deletion of a mount point that has not been emptied.
+
 `./s3bk backup name` Uploads any new or changed files from the mount point to Amazon.
+
 `./s3bk restore name` Restores the mount point from Amazon. **This will overwrite any local changes**
+
 
 ## Planned development
 
