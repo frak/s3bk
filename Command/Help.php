@@ -21,7 +21,11 @@ class Help extends \Core\Command
         ),
         'backup' => array(
             'short' => 'Synchronise files with S3',
-            'full' => "\nYou should specify the mount point that you wish to syncronise with S3 as the first\nparameter.\n"
+            'full' => "\nYou should specify the mount point that you wish to synchronise with S3 as the first\nparameter.\n"
+        ),
+        'restore' => array(
+            'short' => 'Restore files to the mount point from S3',
+            'full' => "\nYou should specify the mount point that you wish to restore from as the first parameter.\n"
         ),
     );
 
