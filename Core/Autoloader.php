@@ -10,6 +10,9 @@ class Autoloader
         if($className == 'AmazonS3') {
             require_once "$baseDir/Aws/sdk.class.php";
         }
+        if($className == 'Console_ProgressBar') {
+            require_once 'Console/ProgressBar.php';
+        }
         $classPath = implode(DIRECTORY_SEPARATOR, explode('\\', $className)) . '.php';
         if(file_exists("{$baseDir}{$classPath}")) {
             require_once "{$baseDir}{$classPath}";
