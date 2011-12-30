@@ -18,7 +18,7 @@ class Backup extends \Core\Command
         if(!$this->_s3->if_bucket_exists($this->_getBucketName())) {
             \Core\Bucket::create($this->_s3, $this->_getBucketName());
         }
-        $this->_s3->register_streaming_read_callback(array($this, '_writeCallback'));
+        $this->_s3->register_streaming_read_callback(array($this, '_readCallback'));
         $iter = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($mount->path));
         while($iter->valid()) {
             $key = $iter->key();
@@ -41,7 +41,7 @@ class Backup extends \Core\Command
         return in_array($fileName, $this->_systemFiles);
     }
 
-    public function _writeCallback($curlHandle, $fileHandle, $length)
+    public function _readCallback($curlHandle, $fileHandle, $length)
     {
         if(!$this->_progressBar->UPDATED) {
             $this->_amountDone = curl_getinfo($curlHandle, CURLINFO_CONTENT_LENGTH_UPLOAD);

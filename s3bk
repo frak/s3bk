@@ -63,6 +63,20 @@ switch($argv[1]) {
             die("Usage:\n" . __FILE__ . " backup name\n");
         }
         break;
+    case 'restore':
+        if(3 === count($argv)) {
+            if(\Core\Mounts::exist($argv[2])) {
+                $command = new \Command\Restore();
+                $command->setKey('name', $argv[2]);
+                $command->setKey('user', $user);
+                $command->setKey('pbar', new \Console_ProgressBar('* %fraction% KB [%bar%] %percent%', '=>', ' ', 100, 1));
+            } else {
+                die("Mount '{$argv[2]}' does not exist");
+            }
+        } else {
+            die("Usage:\n" . __FILE__ . " restore name\n");
+        }
+        break;
     case 'help':
     default:
         $command = new \Command\Help();
