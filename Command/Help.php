@@ -7,7 +7,7 @@ class Help extends \Core\Command
     private $_commands = array(
         'mount' => array(
             'short' => 'Maps a local drive to S3',
-            'full' => "\nThe first parameter needs to be the path to the local directory that you want to mount,\nthe second parameter should be the name you want to give it.\n"
+            'full' => "\nThe first parameter needs to be the path to the local directory that you want to mount,\nand the second parameter should be the name you want to give it.\n"
         ),
         'list' => array(
             'short' => 'List mapped directories',
