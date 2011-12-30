@@ -5,14 +5,6 @@ require_once 'Core/Autoloader.php';
 
 $user = get_current_user();
 
-$mountsConf = 'conf/mounts';
-if(file_exists($mountsConf)) {
-    $mounts = unserialize(file_get_contents($mountsConf));
-} else {
-    mkdir('conf');
-    $mounts = array();
-}
-
 $command = null;
 if(!isset($argv[1])) {
     die("Usage:\n" . __FILE__ . " command (parameters)\nTo see available commands use the command 'help'\n");
@@ -21,43 +13,47 @@ if(!isset($argv[1])) {
 switch($argv[1]) {
     case 'list':
         $command = new \Command\ListMounts();
-        $command->setKey('mounts', $mounts);
         break;
     case 'mount':
-        if(4 === count($argv) || 5 === count($argv)) {
-            if(isset($mounts[$argv[3]])) {
+        if(count($argv) >= 4) {
+            if(\Core\Mounts::exist($argv[3])) {
                 die("Mount point '{$argv[3]}' already exists\n");
             }
+            $path = $argv[2];
+            if($path[strlen($path) - 1] !== '/') {
+                $path .= '/';
+            }
+            $type = (isset($argv[4])) ? $argv[4] : 'backup';
+            $vers = (isset($argv[5]) && 'versioned' == $argv[5]) ? true : false;
             $command = new \Command\Mount();
+            $command->setKey('path', $path);
             $command->setKey('name', $argv[3]);
+            $command->setKey('type', $type);
+            $command->setKey('versioned', $vers);
             $command->setKey('user', $user);
-            $mounts[$argv[3]] = array(
-                'path' => $argv[2],
-                'type' => (isset($argv[4])) ? $argv[4] : 'backup'
-            );
-            file_put_contents($mountsConf, serialize($mounts));
         } else {
             die("Usage:\n" . __FILE__ . " mount /path/to/mount name\n");
         }
         break;
     case 'remove':
-        if(3 === count($argv)) {
-            if(in_array($argv[2], array_keys($mounts))) {
+        if(count($argv) > 2) {
+            if(\Core\Mounts::exist($argv[2])) {
                 $command = new \Command\Remove();
                 $command->setKey('name', $argv[2]);
-                $command->setKey('path', $mounts[$argv[2]]['path']);
                 $command->setKey('user', $user);
+                $command->setKey('force', (isset($argv[3]) && 'force' == $argv[3]) ? true : false);
             } else {
                 die("Mount '{$argv[2]}' does not exist");
             }
+        } else {
+            die("Usage:\n" . __FILE__ . " remove name\n");
         }
         break;
     case 'backup':
         if(3 === count($argv)) {
-            if(in_array($argv[2], array_keys($mounts))) {
+            if(\Core\Mounts::exist($argv[2])) {
                 $command = new \Command\Backup();
                 $command->setKey('name', $argv[2]);
-                $command->setKey('path', $mounts[$argv[2]]['path']);
                 $command->setKey('user', $user);
                 $command->setKey('pbar', new \Console_ProgressBar('* %fraction% KB [%bar%] %percent%', '=>', ' ', 100, 1));
             } else {
@@ -79,3 +75,4 @@ switch($argv[1]) {
 }
 
 $command->run();
+

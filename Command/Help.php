@@ -17,7 +17,7 @@ class Help extends \Core\Command
         ),
         'remove' => array(
             'short' => 'Remove a local drive mapping',
-            'full' => "\nYou should specify the mount point that you wish to remove as the first parameter.\n"
+            'full' => "\nYou should specify the mount point that you wish to remove as the first parameter.\nSpecify a second parameter of 'force' if you wish to force the removal of remaining files."
         ),
         'backup' => array(
             'short' => 'Synchronise files with S3',

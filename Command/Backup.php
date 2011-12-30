@@ -12,18 +12,18 @@ class Backup extends \Core\Command
 
     public function run()
     {
+        $mount = \Core\Mounts::get($this->_getKey('name'));
         $this->_progressBar = $this->_getKey('pbar');
         $this->_progressBar->UPDATED = false;
         if(!$this->_s3->if_bucket_exists($this->_getBucketName())) {
             \Core\Bucket::create($this->_s3, $this->_getBucketName());
         }
         $this->_s3->register_streaming_read_callback(array($this, '_writeCallback'));
-        $base = $this->_getKey('path');
-        $iter = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($base));
+        $iter = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($mount->path));
         while($iter->valid()) {
             $key = $iter->key();
             if(!$iter->isDot() && !$this->_isSystemFile($key)) {
-                $res = $this->_processFile($base, $key);
+                $res = $this->_processFile($mount->path, $key);
                 if(!$res) {
                     echo "Problems with AmazonS3 service - please try again in a few minutes\n";
                     return;
@@ -32,7 +32,7 @@ class Backup extends \Core\Command
             }
             $iter->next();
         }
-        $this->_prune($base);
+        $this->_prune($mount->path);
     }
 
     private function _isSystemFile($fileName) {
@@ -55,7 +55,7 @@ class Backup extends \Core\Command
     {
         try {
             $bucket = $this->_getBucketName();
-            $fileName = str_replace($base . DIRECTORY_SEPARATOR, '', $name);
+            $fileName = str_replace($base, '', $name);
             echo "{$fileName}... ";
             $sourceFile = $name;
             if($this->_s3->if_object_exists($bucket, $fileName)) {
@@ -94,7 +94,7 @@ class Backup extends \Core\Command
         $list = $this->_s3->get_object_list($bucket);
         $delCount = 0;
         foreach($list as $file) {
-            if(!file_exists($base . DIRECTORY_SEPARATOR . $file)) {
+            if(!file_exists($base . $file)) {
                 $this->_s3->batch()->delete_object($bucket, $file);
                 ++$delCount;
             }
