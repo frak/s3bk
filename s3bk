@@ -40,6 +40,18 @@ switch($argv[1]) {
             die("Usage:\n" . __FILE__ . " mount /path/to/mount name\n");
         }
         break;
+    case 'remove':
+        if(3 === count($argv)) {
+            if(in_array($argv[2], array_keys($mounts))) {
+                $command = new \Command\Remove();
+                $command->setKey('name', $argv[2]);
+                $command->setKey('path', $mounts[$argv[2]]['path']);
+                $command->setKey('user', $user);
+            } else {
+                die("Mount '{$argv[2]}' does not exist");
+            }
+        }
+        break;
     case 'backup':
         if(3 === count($argv)) {
             if(in_array($argv[2], array_keys($mounts))) {
@@ -47,6 +59,7 @@ switch($argv[1]) {
                 $command->setKey('name', $argv[2]);
                 $command->setKey('path', $mounts[$argv[2]]['path']);
                 $command->setKey('user', $user);
+                $command->setKey('pbar', new \Console_ProgressBar('* %fraction% KB [%bar%] %percent%', '=>', ' ', 100, 1));
             } else {
                 die("Mount '{$argv[2]}' does not exist");
             }
