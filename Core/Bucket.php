@@ -67,4 +67,20 @@ class Bucket
         $res = $s3->delete_bucket($name);
         return $res->status == 204;
     }
+
+    /**
+     * Returns all of the files in the bucket as an array
+     *
+     * @param AmazonS3 $s3 The AWS class for interacting with S3
+     * @param string $name The name of the bucket to delete
+     * @return array Array of remote files
+     * @throws InvalidArgumentException If the bucket name is empty
+     */
+    public static function getFiles(\AmazonS3 $s3, $name)
+    {
+        if(empty($name) || !$s3->if_bucket_exists($name)) {
+            throw new \InvalidArgumentException("The bucket must have a name and must exist on S3 ($name)");
+        }
+        return $s3->get_object_list($name);
+    }
 }
