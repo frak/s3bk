@@ -77,6 +77,20 @@ switch($argv[1]) {
             die("Usage:\n" . __FILE__ . " restore name\n");
         }
         break;
+    case 'interval':
+        if(4 === count($argv)) {
+            if(\Core\Mounts::exist($argv[2])) {
+                $command = new \Command\Interval();
+                $command->setKey('name', $argv[2]);
+                $command->setKey('user', $user);
+                $command->setKey('interval', $argv[3]);
+            } else {
+                die("Mount '{$argv[2]}' does not exist");
+            }
+        } else {
+            die("Usage:\n" . __FILE__ . " interval name 30|2h5m|clear\n");
+        }
+        break;
     case 'help':
     default:
         $command = new \Command\Help();
