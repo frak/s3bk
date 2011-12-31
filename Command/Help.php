@@ -27,7 +27,7 @@ class Help extends \Core\Command
         ),
         'interval' => array(
             'short' => 'Schedule backups at intervals',
-            'full'  => "Specify the mount point name and then the interval between backups, either in minutes alone (30)\nor with hours (2h5m). To stop scheduled backups, use the interval 'clear'"
+            'full'  => "Specify the mount point name and then the interval between backups, either in minutes (30 - less than 60)\nor in hours (2h - less than 24). To stop scheduled backups, use the interval 'clear'"
         ),
     );
 
