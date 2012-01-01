@@ -23,7 +23,6 @@ class Interval extends \Core\Command
 
         if ($interval !== 'clear') {
             $interval = $this->_parseInterval($interval);
-            var_dump($interval);
             $command = "{$interval} " . dirname(dirname(__FILE__)) . "/s3bk backup {$name} > /dev/null 2>&1";
             if ($index > -1) {
                 $crons[$index] = $command;
