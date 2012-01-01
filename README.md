@@ -45,6 +45,12 @@ Once you have done this, you are able to run the following commands:
 
 `./s3bk restore name` Restores the mount point from Amazon. **This will overwrite any local changes**
 
+`./s3bk interval name 20` Schedules the named mount point to backup every 20 minutes
+
+`./s3bk interval name 2d` Schedules the named mount point to backup every 2 days
+
+`./s3bk interval name clear` Clears any scheduled backups for the named mount point
+
 
 ## Planned development
 
