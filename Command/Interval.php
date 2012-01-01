@@ -47,7 +47,7 @@ class Interval extends \Core\Command
             return "*/{$interval} * * * *";
         } else {
             $matches = array();
-            if(preg_match('/^(\d+)h$/', $interval, $matches)) {
+            if(preg_match('/^(\d+)d$/', $interval, $matches)) {
                 return "0 */{$matches[1]} * * *";
             } else {
                 return "*/30 * * * *";
