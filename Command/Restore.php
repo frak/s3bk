@@ -31,6 +31,12 @@ class Restore extends \Core\Command
             $sourceFile = $mount->path . $fileName;
             if(!file_exists($sourceFile)) {
                 echo "not present" . PHP_EOL;
+                $sourcePath = explode('/', $sourceFile);
+                array_pop($sourcePath);
+                $sourcePath = implode('/', $sourcePath);
+                if(!is_dir($sourcePath)) {
+                    mkdir($sourcePath, 0755, true);
+                }
                 $this->_s3->get_object($bucket, $fileName, array(
                     'fileDownload' => $sourceFile
                 ));
