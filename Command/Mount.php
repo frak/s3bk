@@ -6,9 +6,9 @@ class Mount extends \Core\Command
 {
     public function run()
     {
-        \Core\Bucket::create($this->_s3, $this->_getBucketName());
-        $name = $this->_getKey('name');
-        \Core\Mounts::add($name, $this->_getKey('path'), $this->_getKey('type'), $this->_getKey('versioned'));
+        \Core\Bucket::create($this->s3, $this->getBucketName());
+        $name = $this->getKey('name');
+        \Core\Mounts::add($name, $this->getKey('path'), $this->getKey('type'), $this->getKey('versioned'));
         echo "Mount point '{$name}' created\n";
     }
 }

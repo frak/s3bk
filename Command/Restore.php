@@ -20,12 +20,12 @@ class Restore extends \Core\Command
 
     public function run()
     {
-        $bucket = $this->_getBucketName();
-        $this->_progressBar = $this->_getKey('pbar');
+        $bucket = $this->getBucketName();
+        $this->_progressBar = $this->getKey('pbar');
         $this->_progressBar->UPDATED = false;
-        $mount = \Core\Mounts::get($this->_getKey('name'));
-        $files = \Core\Bucket::getFiles($this->_s3, $bucket);
-        $this->_s3->register_streaming_write_callback(array($this, '_writeCallback'));
+        $mount = \Core\Mounts::get($this->getKey('name'));
+        $files = \Core\Bucket::getFiles($this->s3, $bucket);
+        $this->s3->register_streaming_write_callback(array($this, '_writeCallback'));
         foreach($files as $fileName) {
             echo "{$fileName}... ";
             $sourceFile = $mount->path . $fileName;
@@ -37,14 +37,14 @@ class Restore extends \Core\Command
                 if(!is_dir($sourcePath)) {
                     mkdir($sourcePath, 0755, true);
                 }
-                $this->_s3->get_object($bucket, $fileName, array(
+                $this->s3->get_object($bucket, $fileName, array(
                     'fileDownload' => $sourceFile
                 ));
                 $this->_progressBar->update($this->_amountDone);
                 echo PHP_EOL;
             } else {
                 do {
-                    $res = $this->_s3->get_object_headers($bucket, $fileName);
+                    $res = $this->s3->get_object_headers($bucket, $fileName);
                 } while(!$res->isOK());
 
                 $remoteMd5 = str_replace('"', '', $res->header['etag']);
@@ -53,7 +53,7 @@ class Restore extends \Core\Command
                     echo "already latest version" . PHP_EOL;
                 } else {
                     echo "differs from backup" . PHP_EOL;
-                    $this->_s3->get_object($bucket, $fileName, array(
+                    $this->s3->get_object($bucket, $fileName, array(
                         'fileDownload' => $sourceFile
                     ));
                     $this->_progressBar->update($this->_amountDone);

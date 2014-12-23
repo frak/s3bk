@@ -6,8 +6,8 @@ class Interval extends \Core\Command
 {
     public function run()
     {
-        $name = $this->_getKey('name');
-        $interval = $this->_getKey('interval');
+        $name = $this->getKey('name');
+        $interval = $this->getKey('interval');
 
         $crons = \Core\Cron::get();
         $index = -1;

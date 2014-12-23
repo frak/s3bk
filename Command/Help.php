@@ -33,7 +33,7 @@ class Help extends \Core\Command
 
     public function run()
     {
-        $command = $this->_getKey('command');
+        $command = $this->getKey('command');
         if ('all' === $command || !isset($this->_commands[$command])) {
             echo "Commands available:\n\n";
             foreach($this->_commands as $name => $help) {
