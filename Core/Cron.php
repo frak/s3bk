@@ -8,6 +8,7 @@ class Cron
     {
         $out = explode("\n", `crontab -l 2>/dev/null`);
         array_pop($out);
+
         return $out;
     }
 

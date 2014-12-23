@@ -14,7 +14,6 @@
  * permissions and limitations under the License.
  */
 
-
 /*%******************************************************************************************%*/
 // CLASS
 
@@ -22,194 +21,201 @@
  * Wraps the underlying `SimpleXMLIterator` class with enhancements for rapidly traversing the DOM tree,
  * converting types, and comparisons.
  *
- * @version 2011.04.25
- * @license See the included NOTICE.md file for more information.
+ * @version   2011.04.25
+ * @license   See the included NOTICE.md file for more information.
  * @copyright See the included NOTICE.md file for more information.
- * @link http://aws.amazon.com/php/ PHP Developer Center
- * @link http://php.net/SimpleXML SimpleXML
+ * @link      http://aws.amazon.com/php/ PHP Developer Center
+ * @link      http://php.net/SimpleXML SimpleXML
  */
 class CFSimpleXML extends SimpleXMLIterator
 {
-	/**
-	 * Stores the namespace name to use in XPath queries.
-	 */
-	public $xml_ns;
 
-	/**
-	 * Stores the namespace URI to use in XPath queries.
-	 */
-	public $xml_ns_url;
+    /**
+     * Stores the namespace name to use in XPath queries.
+     */
+    public $xml_ns;
 
-	/**
-	 * Catches requests made to methods that don't exist. Specifically, looks for child nodes via XPath.
-	 *
-	 * @param string $name (Required) The name of the method.
-	 * @param array $arguments (Required) The arguments passed to the method.
-	 * @return mixed Either an array of matches, or a single <CFSimpleXML> element.
-	 */
-	public function __call($name, $arguments)
-	{
-		// Remap $this
-		$self = $this;
+    /**
+     * Stores the namespace URI to use in XPath queries.
+     */
+    public $xml_ns_url;
 
-		// Re-base the XML
-		$self = new CFSimpleXML($self->asXML());
+    /**
+     * Catches requests made to methods that don't exist. Specifically, looks for child nodes via XPath.
+     *
+     * @param string $name      (Required) The name of the method.
+     * @param array  $arguments (Required) The arguments passed to the method.
+     *
+     * @return mixed Either an array of matches, or a single <CFSimpleXML> element.
+     */
+    public function __call($name, $arguments)
+    {
+        // Remap $this
+        $self = $this;
 
-		// Determine XPath query
-		$self->xpath_expression = 'descendant-or-self::' . $name;
+        // Re-base the XML
+        $self = new CFSimpleXML($self->asXML());
 
-		// Get the results and augment with CFArray
-		$results = $self->xpath($self->xpath_expression);
-		if (!count($results)) return false;
-		$results = new CFArray($results);
+        // Determine XPath query
+        $self->xpath_expression = 'descendant-or-self::' . $name;
 
-		// If an integer was passed, return only that result
-		if (isset($arguments[0]) && is_int($arguments[0]))
-		{
-			if (isset($results[$arguments[0]]))
-			{
-				return $results[$arguments[0]];
-			}
+        // Get the results and augment with CFArray
+        $results = $self->xpath($self->xpath_expression);
+        if (!count($results)) {
+            return false;
+        }
+        $results = new CFArray($results);
 
-			return false;
-		}
+        // If an integer was passed, return only that result
+        if (isset($arguments[0]) && is_int($arguments[0])) {
+            if (isset($results[$arguments[0]])) {
+                return $results[$arguments[0]];
+            }
 
-		return $results;
-	}
+            return false;
+        }
 
-	/**
-	 * Alternate approach to constructing a new instance. Supports chaining.
-	 *
-	 * @param string $data (Required) A well-formed XML string or the path or URL to an XML document if $data_is_url is <code>true</code>.
-	 * @param integer $options (Optional) Used to specify additional LibXML parameters. The default value is <code>0</code>.
-	 * @param boolean $data_is_url (Optional) Specify a value of <code>true</code> to specify that data is a path or URL to an XML document instead of string data. The default value is <code>false</code>.
-	 * @param string $ns (Optional) The XML namespace to return values for.
-	 * @param boolean $is_prefix (Optional) (No description provided by PHP.net.)
-	 * @return CFSimpleXML Creates a new <CFSimpleXML> element.
-	 */
-	public static function init($data, $options = 0, $data_is_url, $ns, $is_prefix = false)
-	{
-		if (version_compare(PHP_VERSION, '5.3.0', '<'))
-		{
-			throw new Exception('PHP 5.3 or newer is required to instantiate a new class with CLASS::init().');
-		}
+        return $results;
+    }
 
-		$self = get_called_class();
-		return new $self($data, $options, $data_is_url, $ns, $is_prefix);
-	}
+    /**
+     * Alternate approach to constructing a new instance. Supports chaining.
+     *
+     * @param string  $data        (Required) A well-formed XML string or the path or URL to an XML document if $data_is_url is <code>true</code>.
+     * @param integer $options     (Optional) Used to specify additional LibXML parameters. The default value is <code>0</code>.
+     * @param boolean $data_is_url (Optional) Specify a value of <code>true</code> to specify that data is a path or URL to an XML document instead of string data. The default value is <code>false</code>.
+     * @param string  $ns          (Optional) The XML namespace to return values for.
+     * @param boolean $is_prefix   (Optional) (No description provided by PHP.net.)
+     *
+     * @return CFSimpleXML Creates a new <CFSimpleXML> element.
+     */
+    public static function init(
+        $data, $options = 0, $data_is_url, $ns, $is_prefix = false
+    ) {
+        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            throw new Exception(
+                'PHP 5.3 or newer is required to instantiate a new class with CLASS::init().'
+            );
+        }
 
+        $self = get_called_class();
 
-	/*%******************************************************************************************%*/
-	// TRAVERSAL
-
-	/**
-	 * Wraps the results of an XPath query in a <CFArray> object.
-	 *
-	 * @param string $expr (Required) The XPath expression to use to query the XML response.
-	 * @return CFArray A <CFArray> object containing the results of the XPath query.
-	 */
-	public function query($expr)
-	{
-		return new CFArray($this->xpath($expr));
-	}
-
-	/**
-	 * Gets the parent or a preferred ancestor of the current element.
-	 *
-	 * @param string $node (Optional) Name of the ancestor element to match and return.
-	 * @return CFSimpleXML A <CFSimpleXML> object containing the requested node.
-	 */
-	public function parent($node = null)
-	{
-		if ($node)
-		{
-			$parents = $this->xpath('ancestor-or-self::' . $node);
-		}
-		else
-		{
-			$parents = $this->xpath('parent::*');
-		}
-
-		return $parents[0];
-	}
+        return new $self($data, $options, $data_is_url, $ns, $is_prefix);
+    }
 
 
-	/*%******************************************************************************************%*/
-	// ALTERNATE FORMATS
+    /*%******************************************************************************************%*/
+    // TRAVERSAL
 
-	/**
-	 * Gets the current XML node as a true string.
-	 *
-	 * @return string The current XML node as a true string.
-	 */
-	public function to_string()
-	{
-		return (string) $this;
-	}
+    /**
+     * Wraps the results of an XPath query in a <CFArray> object.
+     *
+     * @param string $expr (Required) The XPath expression to use to query the XML response.
+     *
+     * @return CFArray A <CFArray> object containing the results of the XPath query.
+     */
+    public function query($expr)
+    {
+        return new CFArray($this->xpath($expr));
+    }
 
-	/**
-	 * Gets the current XML node as <CFArray>, a child class of PHP's <php:ArrayObject> class.
-	 *
-	 * @return CFArray The current XML node as a <CFArray> object.
-	 */
-	public function to_array()
-	{
-		return new CFArray(json_decode(json_encode($this), true));
-	}
+    /**
+     * Gets the parent or a preferred ancestor of the current element.
+     *
+     * @param string $node (Optional) Name of the ancestor element to match and return.
+     *
+     * @return CFSimpleXML A <CFSimpleXML> object containing the requested node.
+     */
+    public function parent($node = null)
+    {
+        if ($node) {
+            $parents = $this->xpath('ancestor-or-self::' . $node);
+        } else {
+            $parents = $this->xpath('parent::*');
+        }
 
-	/**
-	 * Gets the current XML node as a stdClass object.
-	 *
-	 * @return array The current XML node as a stdClass object.
-	 */
-	public function to_stdClass()
-	{
-		return json_decode(json_encode($this));
-	}
-
-	/**
-	 * Gets the current XML node as a JSON string.
-	 *
-	 * @return string The current XML node as a JSON string.
-	 */
-	public function to_json()
-	{
-		return json_encode($this);
-	}
-
-	/**
-	 * Gets the current XML node as a YAML string.
-	 *
-	 * @return string The current XML node as a YAML string.
-	 */
-	public function to_yaml()
-	{
-		return sfYaml::dump(json_decode(json_encode($this), true), 5);
-	}
+        return $parents[0];
+    }
 
 
-	/*%******************************************************************************************%*/
-	// COMPARISONS
+    /*%******************************************************************************************%*/
+    // ALTERNATE FORMATS
 
-	/**
-	 * Whether or not the current node exactly matches the compared value.
-	 *
-	 * @param string $value (Required) The value to compare the current node to.
-	 * @return boolean Whether or not the current node exactly matches the compared value.
-	 */
-	public function is($value)
-	{
-		return ((string) $this === $value);
-	}
+    /**
+     * Gets the current XML node as a true string.
+     *
+     * @return string The current XML node as a true string.
+     */
+    public function to_string()
+    {
+        return (string)$this;
+    }
 
-	/**
-	 * Whether or not the current node contains the compared value.
-	 *
-	 * @param string $value (Required) The value to use to determine whether it is contained within the node.
-	 * @return boolean Whether or not the current node contains the compared value.
-	 */
-	public function contains($value)
-	{
-		return (stripos((string) $this, $value) !== false);
-	}
+    /**
+     * Gets the current XML node as <CFArray>, a child class of PHP's <php:ArrayObject> class.
+     *
+     * @return CFArray The current XML node as a <CFArray> object.
+     */
+    public function to_array()
+    {
+        return new CFArray(json_decode(json_encode($this), true));
+    }
+
+    /**
+     * Gets the current XML node as a stdClass object.
+     *
+     * @return array The current XML node as a stdClass object.
+     */
+    public function to_stdClass()
+    {
+        return json_decode(json_encode($this));
+    }
+
+    /**
+     * Gets the current XML node as a JSON string.
+     *
+     * @return string The current XML node as a JSON string.
+     */
+    public function to_json()
+    {
+        return json_encode($this);
+    }
+
+    /**
+     * Gets the current XML node as a YAML string.
+     *
+     * @return string The current XML node as a YAML string.
+     */
+    public function to_yaml()
+    {
+        return sfYaml::dump(json_decode(json_encode($this), true), 5);
+    }
+
+
+    /*%******************************************************************************************%*/
+    // COMPARISONS
+
+    /**
+     * Whether or not the current node exactly matches the compared value.
+     *
+     * @param string $value (Required) The value to compare the current node to.
+     *
+     * @return boolean Whether or not the current node exactly matches the compared value.
+     */
+    public function is($value)
+    {
+        return ((string)$this === $value);
+    }
+
+    /**
+     * Whether or not the current node contains the compared value.
+     *
+     * @param string $value (Required) The value to use to determine whether it is contained within the node.
+     *
+     * @return boolean Whether or not the current node contains the compared value.
+     */
+    public function contains($value)
+    {
+        return (stripos((string)$this, $value) !== false);
+    }
 }

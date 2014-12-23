@@ -4,6 +4,7 @@ namespace Core;
 
 abstract class Command
 {
+
     /**
      * @var \AmazonS3 The S3 instance
      */
@@ -26,13 +27,15 @@ abstract class Command
 
     /**
      * Sets a value for a key
-     * @param string $name The name of the key
-     * @param mixed $value The value to set
+     *
+     * @param string $name  The name of the key
+     * @param mixed  $value The value to set
+     *
      * @throws \InvalidArgumentException If the key name is empty
      */
     public function setKey($name, $value)
     {
-        if(empty($name)) {
+        if (empty($name)) {
             throw new \InvalidArgumentException("The key must have a name");
         }
         $this->params[$name] = $value;
@@ -40,13 +43,15 @@ abstract class Command
 
     /**
      * Sets a reference value for a key
-     * @param string $name The name of the key
-     * @param mixed $value The value to set
+     *
+     * @param string $name  The name of the key
+     * @param mixed  $value The value to set
+     *
      * @throws \InvalidArgumentException If the key name is empty
      */
     public function setRefKey($name, &$value)
     {
-        if(empty($name)) {
+        if (empty($name)) {
             throw new \InvalidArgumentException("The key must have a name");
         }
         $this->params[$name] = $value;
@@ -54,15 +59,20 @@ abstract class Command
 
     /**
      * Retrieves a value for a key
+     *
      * @param string $name The key to retrieve
+     *
      * @return mixed The value for the key
      * @throws \InvalidArgumentException If the key is not set
      */
     protected function getKey($name)
     {
-        if(!isset($this->params[$name])) {
-            throw new \InvalidArgumentException("The key '{$name}' has not been set");
+        if (!isset($this->params[$name])) {
+            throw new \InvalidArgumentException(
+                "The key '{$name}' has not been set"
+            );
         }
+
         return $this->params[$name];
     }
 
@@ -73,7 +83,8 @@ abstract class Command
         /**
          * @todo Fix this hardcoding evil
          */
-        $key  = 'akiaikjuiqufgxtyzvla';
+        $key = 'akiaikjuiqufgxtyzvla';
+
         return "{$key}-{$user}-{$name}";
     }
 
@@ -81,5 +92,4 @@ abstract class Command
      * Run method to be called be the bootstrap
      */
     abstract public function run();
-
 }

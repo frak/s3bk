@@ -14,121 +14,127 @@
  * permissions and limitations under the License.
  */
 
-
 /*%******************************************************************************************%*/
 // CLASS
 
 /**
  * Simplifies the process of signing JSON policy documents.
  *
- * @version 2011.04.25
- * @license See the included NOTICE.md file for more information.
+ * @version   2011.04.25
+ * @license   See the included NOTICE.md file for more information.
  * @copyright See the included NOTICE.md file for more information.
- * @link http://aws.amazon.com/php/ PHP Developer Center
+ * @link      http://aws.amazon.com/php/ PHP Developer Center
  */
 class CFPolicy
 {
-	/**
-	 * Stores the object that contains the authentication credentials.
-	 */
-	public $auth;
 
-	/**
-	 * Stores the policy object that we're working with.
-	 */
-	public $json_policy;
+    /**
+     * Stores the object that contains the authentication credentials.
+     */
+    public $auth;
 
-	/**
-	 * Constructs a new instance of this class.
-	 *
-	 * @param CFRuntime $auth (Required) An instance of any authenticated AWS object that is an instance of <CFRuntime> (e.g. <AmazonEC2>, <AmazonS3>).
-	 * @param string|array $policy (Required) The associative array representing the S3 policy to use, or a string of JSON content.
-	 * @return $this A reference to the current instance.
-	 * @link http://docs.amazonwebservices.com/AmazonS3/2006-03-01/dev/index.html?HTTPPOSTForms.html S3 Policies
-	 * @link http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?AccessPolicyLanguage.html Access Policy Language
-	 */
-	public function __construct($auth, $policy)
-	{
-		$this->auth = $auth;
+    /**
+     * Stores the policy object that we're working with.
+     */
+    public $json_policy;
 
-		if (is_array($policy)) // We received an associative array...
-		{
-			$this->json_policy = json_encode($policy);
-		}
-		else // We received a valid, parseable JSON string...
-		{
-			$this->json_policy = json_encode(json_decode($policy, true));
-		}
+    /**
+     * Constructs a new instance of this class.
+     *
+     * @param CFRuntime    $auth   (Required) An instance of any authenticated AWS object that is an instance of <CFRuntime> (e.g. <AmazonEC2>, <AmazonS3>).
+     * @param string|array $policy (Required) The associative array representing the S3 policy to use, or a string of JSON content.
+     *
+     * @return $this A reference to the current instance.
+     * @link http://docs.amazonwebservices.com/AmazonS3/2006-03-01/dev/index.html?HTTPPOSTForms.html S3 Policies
+     * @link http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?AccessPolicyLanguage.html Access Policy Language
+     */
+    public function __construct($auth, $policy)
+    {
+        $this->auth = $auth;
 
-		return $this;
-	}
+        if (is_array($policy)) // We received an associative array...
+        {
+            $this->json_policy = json_encode($policy);
+        } else // We received a valid, parseable JSON string...
+        {
+            $this->json_policy = json_encode(json_decode($policy, true));
+        }
 
-	/**
-	 * Alternate approach to constructing a new instance. Supports chaining.
-	 *
-	 * @param CFRuntime $auth (Required) An instance of any authenticated AWS object that is an instance of <CFRuntime> (e.g. <AmazonEC2>, <AmazonS3>).
-	 * @param string|array $policy (Required) The associative array representing the S3 policy to use, or a string of JSON content.
-	 * @return $this A reference to the current instance.
-	 */
-	public static function init($auth, $policy)
-	{
-		if (version_compare(PHP_VERSION, '5.3.0', '<'))
-		{
-			throw new Exception('PHP 5.3 or newer is required to instantiate a new class with CLASS::init().');
-		}
+        return $this;
+    }
 
-		$self = get_called_class();
-		return new $self($auth, $policy);
-	}
+    /**
+     * Alternate approach to constructing a new instance. Supports chaining.
+     *
+     * @param CFRuntime    $auth   (Required) An instance of any authenticated AWS object that is an instance of <CFRuntime> (e.g. <AmazonEC2>, <AmazonS3>).
+     * @param string|array $policy (Required) The associative array representing the S3 policy to use, or a string of JSON content.
+     *
+     * @return $this A reference to the current instance.
+     */
+    public static function init($auth, $policy)
+    {
+        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            throw new Exception(
+                'PHP 5.3 or newer is required to instantiate a new class with CLASS::init().'
+            );
+        }
 
-	/**
-	 * Get the key from the authenticated instance.
-	 *
-	 * @return string The key from the authenticated instance.
-	 */
-	public function get_key()
-	{
-		return $this->auth->key;
-	}
+        $self = get_called_class();
 
-	/**
-	 * Base64-encodes the JSON string.
-	 *
-	 * @return string The Base64-encoded version of the JSON string.
-	 */
-	public function get_policy()
-	{
-		return base64_encode($this->json_policy);
-	}
+        return new $self($auth, $policy);
+    }
 
-	/**
-	 * Gets the JSON string with the whitespace removed.
-	 *
-	 * @return string The JSON string without extraneous whitespace.
-	 */
-	public function get_json()
-	{
-		return $this->json_policy;
-	}
+    /**
+     * Get the key from the authenticated instance.
+     *
+     * @return string The key from the authenticated instance.
+     */
+    public function get_key()
+    {
+        return $this->auth->key;
+    }
 
-	/**
-	 * Gets the JSON string with the whitespace removed.
-	 *
-	 * @return string The Base64-encoded, signed JSON string.
-	 */
-	public function get_policy_signature()
-	{
-		return base64_encode(hash_hmac('sha1', $this->get_policy(), $this->auth->secret_key));
-	}
+    /**
+     * Base64-encodes the JSON string.
+     *
+     * @return string The Base64-encoded version of the JSON string.
+     */
+    public function get_policy()
+    {
+        return base64_encode($this->json_policy);
+    }
 
-	/**
-	 * Decode a policy that was returned from the service.
-	 *
-	 * @param string $response (Required) The policy returned by AWS that you want to decode into an object.
-	 * @return string The Base64-encoded, signed JSON string.
-	 */
-	public static function decode_policy($response)
-	{
-		return json_decode(urldecode($response), true);
-	}
+    /**
+     * Gets the JSON string with the whitespace removed.
+     *
+     * @return string The JSON string without extraneous whitespace.
+     */
+    public function get_json()
+    {
+        return $this->json_policy;
+    }
+
+    /**
+     * Gets the JSON string with the whitespace removed.
+     *
+     * @return string The Base64-encoded, signed JSON string.
+     */
+    public function get_policy_signature()
+    {
+        return base64_encode(
+            hash_hmac('sha1', $this->get_policy(), $this->auth->secret_key)
+        );
+    }
+
+    /**
+     * Decode a policy that was returned from the service.
+     *
+     * @param string $response (Required) The policy returned by AWS that you want to decode into an object.
+     *
+     * @return string The Base64-encoded, signed JSON string.
+     */
+    public static function decode_policy($response)
+    {
+        return json_decode(urldecode($response), true);
+    }
 }

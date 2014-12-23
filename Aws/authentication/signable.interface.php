@@ -14,35 +14,37 @@
  * permissions and limitations under the License.
  */
 
-
 /*%******************************************************************************************%*/
 // INTERFACE
 
 /**
  * The interface implemented by all signing classes.
  *
- * @version 2011.11.22
- * @license See the included NOTICE.md file for more information.
+ * @version   2011.11.22
+ * @license   See the included NOTICE.md file for more information.
  * @copyright See the included NOTICE.md file for more information.
- * @link http://aws.amazon.com/php/ PHP Developer Center
+ * @link      http://aws.amazon.com/php/ PHP Developer Center
  */
 interface Signable
 {
-	/**
-	 * Constructs a new instance of the implementing class.
-	 *
-	 * @param string $endpoint (Required) The endpoint to direct the request to.
-	 * @param string $operation (Required) The operation to execute as a result of this request.
-	 * @param array $payload (Required) The options to use as part of the payload in the request.
-	 * @param CFCredential $credentials (Required) The credentials to use for signing and making requests.
-	 * @return void
-	 */
-	public function __construct($endpoint, $operation, $payload, CFCredential $credentials);
+    /**
+     * Constructs a new instance of the implementing class.
+     *
+     * @param string       $endpoint    (Required) The endpoint to direct the request to.
+     * @param string       $operation   (Required) The operation to execute as a result of this request.
+     * @param array        $payload     (Required) The options to use as part of the payload in the request.
+     * @param CFCredential $credentials (Required) The credentials to use for signing and making requests.
+     *
+     * @return void
+     */
+    public function __construct(
+        $endpoint, $operation, $payload, CFCredential $credentials
+    );
 
-	/**
-	 * Generates a cURL handle with all of the required authentication bits set.
-	 *
-	 * @return resource A cURL handle ready for executing.
-	 */
-	public function authenticate();
+    /**
+     * Generates a cURL handle with all of the required authentication bits set.
+     *
+     * @return resource A cURL handle ready for executing.
+     */
+    public function authenticate();
 }

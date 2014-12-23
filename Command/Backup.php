@@ -29,7 +29,11 @@ class Backup extends \Core\Command
 
     public function run()
     {
-        $mount                      = \Core\Mounts::get($this->getKey('name'));
+        $mount = \Core\Mounts::get($this->getKey('name'));
+        if (!is_dir($mount->path)) {
+            echo "Not mounted" . PHP_EOL;
+        }
+        
         $this->progressBar          = $this->getKey('pbar');
         $this->progressBar->UPDATED = false;
         $this->db                   = $this->getKey('db');
@@ -94,8 +98,8 @@ class Backup extends \Core\Command
     private function processFile($base, $name)
     {
         try {
-            $bucket   = $this->getBucketName();
-            $fileName = str_replace($base, '', $name);
+            $bucket     = $this->getBucketName();
+            $fileName   = str_replace($base, '', $name);
             $sourceFile = $name;
             if ($this->s3->if_object_exists($bucket, $fileName)) {
                 $remoteMd5 = $this->db->getChecksumFor($fileName);
@@ -123,7 +127,7 @@ class Backup extends \Core\Command
                 }
             } else {
                 echo "{$fileName}... created" . PHP_EOL;
-                $res = $this->s3->create_object(
+                $res      = $this->s3->create_object(
                     $bucket, $fileName, array(
                         'fileUpload' => $sourceFile,
                     )

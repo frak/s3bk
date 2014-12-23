@@ -14,55 +14,57 @@
  * permissions and limitations under the License.
  */
 
-
 /*%******************************************************************************************%*/
 // CLASS
 
 /**
  * The abstract class that serves as the base class that signer classes extend.
  *
- * @version 2011.11.22
- * @license See the included NOTICE.md file for more information.
+ * @version   2011.11.22
+ * @license   See the included NOTICE.md file for more information.
  * @copyright See the included NOTICE.md file for more information.
- * @link http://aws.amazon.com/php/ PHP Developer Center
+ * @link      http://aws.amazon.com/php/ PHP Developer Center
  */
 abstract class Signer
 {
-	/**
-	 * The endpoint to direct the request to.
-	 */
-	public $endpoint;
 
-	/**
-	 * The operation to execute as a result of this request.
-	 */
-	public $operation;
+    /**
+     * The endpoint to direct the request to.
+     */
+    public $endpoint;
 
-	/**
-	 * The options to use as part of the payload in the request.
-	 */
-	public $payload;
+    /**
+     * The operation to execute as a result of this request.
+     */
+    public $operation;
 
-	/**
-	 * The credentials to use for signing and making requests.
-	 */
-	public $credentials;
+    /**
+     * The options to use as part of the payload in the request.
+     */
+    public $payload;
+
+    /**
+     * The credentials to use for signing and making requests.
+     */
+    public $credentials;
 
 
-	/**
-	 * Constructs a new instance of the implementing class.
-	 *
-	 * @param string $endpoint (Required) The endpoint to direct the request to.
-	 * @param string $operation (Required) The operation to execute as a result of this request.
-	 * @param array $payload (Required) The options to use as part of the payload in the request.
-	 * @param CFCredential $credentials (Required) The credentials to use for signing and making requests.
-	 * @return void
-	 */
-	public function __construct($endpoint, $operation, $payload, CFCredential $credentials)
-	{
-		$this->endpoint = $endpoint;
-		$this->operation = $operation;
-		$this->payload = $payload;
-		$this->credentials = $credentials;
-	}
+    /**
+     * Constructs a new instance of the implementing class.
+     *
+     * @param string       $endpoint    (Required) The endpoint to direct the request to.
+     * @param string       $operation   (Required) The operation to execute as a result of this request.
+     * @param array        $payload     (Required) The options to use as part of the payload in the request.
+     * @param CFCredential $credentials (Required) The credentials to use for signing and making requests.
+     *
+     * @return void
+     */
+    public function __construct(
+        $endpoint, $operation, $payload, CFCredential $credentials
+    ) {
+        $this->endpoint    = $endpoint;
+        $this->operation   = $operation;
+        $this->payload     = $payload;
+        $this->credentials = $credentials;
+    }
 }

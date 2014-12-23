@@ -6,9 +6,11 @@ class Remove extends \Core\Command
 {
     public function run()
     {
-        $res = \Core\Bucket::delete($this->s3, $this->getBucketName(), $this->getKey('force'));
+        $res  = \Core\Bucket::delete(
+            $this->s3, $this->getBucketName(), $this->getKey('force')
+        );
         $name = $this->getKey('name');
-        if($res) {
+        if ($res) {
             \Core\Mounts::delete($name);
             echo "Mount point '{$name}' removed\n";
         } else {

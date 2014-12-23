@@ -14,56 +14,53 @@
  * permissions and limitations under the License.
  */
 
-
 /*%******************************************************************************************%*/
 // CLASS
 
 /**
  * Contains a series of methods that provide information about the SDK.
  *
- * @version 2010.10.01
- * @license See the included NOTICE.md file for more information.
+ * @version   2010.10.01
+ * @license   See the included NOTICE.md file for more information.
  * @copyright See the included NOTICE.md file for more information.
- * @link http://aws.amazon.com/php/ PHP Developer Center
+ * @link      http://aws.amazon.com/php/ PHP Developer Center
  */
 class CFInfo
 {
-	/**
-	 * Gets information about the web service APIs that the SDK supports.
-	 *
-	 * @return array An associative array containing service classes and API versions.
-	 */
-	public static function api_support()
-	{
-		$existing_classes = get_declared_classes();
+    /**
+     * Gets information about the web service APIs that the SDK supports.
+     *
+     * @return array An associative array containing service classes and API versions.
+     */
+    public static function api_support()
+    {
+        $existing_classes = get_declared_classes();
 
-		foreach (glob(dirname(dirname(__FILE__)) . '/services/*.class.php') as $file)
-		{
-			include $file;
-		}
+        foreach (
+            glob(dirname(dirname(__FILE__)) . '/services/*.class.php') as $file
+        ) {
+            include $file;
+        }
 
-		$with_sdk_classes = get_declared_classes();
-		$new_classes = array_diff($with_sdk_classes, $existing_classes);
-		$filtered_classes = array();
-		$collect = array();
+        $with_sdk_classes = get_declared_classes();
+        $new_classes      = array_diff($with_sdk_classes, $existing_classes);
+        $filtered_classes = array();
+        $collect          = array();
 
-		foreach ($new_classes as $class)
-		{
-			if (strpos($class, 'Amazon') !== false)
-			{
-				$filtered_classes[] = $class;
-			}
-		}
+        foreach ($new_classes as $class) {
+            if (strpos($class, 'Amazon') !== false) {
+                $filtered_classes[] = $class;
+            }
+        }
 
-		$filtered_classes = array_values($filtered_classes);
+        $filtered_classes = array_values($filtered_classes);
 
-		foreach ($filtered_classes as $class)
-		{
-			$obj = new $class();
-			$collect[get_class($obj)] = $obj->api_version;
-			unset($obj);
-		}
+        foreach ($filtered_classes as $class) {
+            $obj = new $class();
+            $collect[get_class($obj)] = $obj->api_version;
+            unset($obj);
+        }
 
-		return $collect;
-	}
+        return $collect;
+    }
 }

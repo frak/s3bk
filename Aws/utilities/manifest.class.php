@@ -14,41 +14,43 @@
  * permissions and limitations under the License.
  */
 
-
 /*%******************************************************************************************%*/
 // CLASS
 
 /**
  * Simplifies the process of generating manifests for the AWS Import/Export service.
  *
- * @version 2010.11.22
- * @license See the included NOTICE.md file for more information.
+ * @version   2010.11.22
+ * @license   See the included NOTICE.md file for more information.
  * @copyright See the included NOTICE.md file for more information.
- * @link http://aws.amazon.com/php/ PHP Developer Center
+ * @link      http://aws.amazon.com/php/ PHP Developer Center
  */
 class CFManifest
 {
 
-	/**
-	 * Takes a JSON object as a string to convert to a YAML manifest.
-	 *
-	 * @param string $json (Required) A JSON object. The JSON string should use canonical rules (e.g., double quotes, quoted keys) as is required by PHP's <php:json_encode()> function.
-	 * @return string A YAML manifest document.
-	 */
-	public static function json($json)
-	{
-		$map = json_decode($json, true);
-		return sfYaml::dump($map);
-	}
+    /**
+     * Takes a JSON object as a string to convert to a YAML manifest.
+     *
+     * @param string $json (Required) A JSON object. The JSON string should use canonical rules (e.g., double quotes, quoted keys) as is required by PHP's <php:json_encode()> function.
+     *
+     * @return string A YAML manifest document.
+     */
+    public static function json($json)
+    {
+        $map = json_decode($json, true);
 
-	/**
-	 * Takes an associative array to convert to a YAML manifest.
-	 *
-	 * @param array $map (Required) An associative array.
-	 * @return string A YAML manifest document.
-	 */
-	public static function map($map)
-	{
-		return sfYaml::dump($map);
-	}
+        return sfYaml::dump($map);
+    }
+
+    /**
+     * Takes an associative array to convert to a YAML manifest.
+     *
+     * @param array $map (Required) An associative array.
+     *
+     * @return string A YAML manifest document.
+     */
+    public static function map($map)
+    {
+        return sfYaml::dump($map);
+    }
 }

@@ -50,7 +50,8 @@ class Database
         if (empty($res)) {
             $sql = "INSERT INTO checksums VALUES (:path, :sum)";
         } else {
-            $sql = "UPDATE checksums SET checksum = :sum WHERE file_key = :path";
+            $sql
+                = "UPDATE checksums SET checksum = :sum WHERE file_key = :path";
         }
         $sth = $this->dbh->prepare($sql);
         if (!is_object($sth)) {
