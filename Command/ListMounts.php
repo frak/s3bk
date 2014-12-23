@@ -6,7 +6,7 @@ class ListMounts extends \Core\Command
 {
     public function run()
     {
-        $mounts = \Core\Mounts::all();
+        $mounts = \Core\Mount::all();
         if (count($mounts) > 0) {
             $maxPath = $maxName = $maxType = 0;
             foreach ($mounts as $name => $mount) {

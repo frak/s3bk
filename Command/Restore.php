@@ -31,7 +31,7 @@ class Restore extends \Core\Command
         $bucket                      = $this->getBucketName();
         $this->_progressBar          = $this->getKey('pbar');
         $this->_progressBar->UPDATED = false;
-        $mount                       = \Core\Mounts::get($this->getKey('name'));
+        $mount                       = \Core\Mount::get($this->getKey('name'));
         $files                       = \Core\Bucket::getFiles(
             $this->s3, $bucket
         );

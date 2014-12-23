@@ -2,7 +2,7 @@
 
 namespace Core;
 
-class Mounts
+class Mount
 {
     static private function _get()
     {
@@ -57,7 +57,7 @@ class Mounts
         return self::_get();
     }
 
-    static public function exist($name)
+    static public function exists($name)
     {
         $mounts = self::_get();
 

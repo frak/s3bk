@@ -19,7 +19,7 @@ switch ($argv[1]) {
         break;
     case 'mount':
         if (count($argv) >= 4) {
-            if (\Core\Mounts::exist($argv[3])) {
+            if (\Core\Mount::exists($argv[3])) {
                 die("Mount point '{$argv[3]}' already exists\n");
             }
             $path = $argv[2];
@@ -41,7 +41,7 @@ switch ($argv[1]) {
         break;
     case 'remove':
         if (count($argv) > 2) {
-            if (\Core\Mounts::exist($argv[2])) {
+            if (\Core\Mount::exists($argv[2])) {
                 $command = new \Command\Remove();
                 $command->setKey('name', $argv[2]);
                 $command->setKey('user', $user);
@@ -58,7 +58,7 @@ switch ($argv[1]) {
         break;
     case 'backup':
         if (3 === count($argv)) {
-            if (\Core\Mounts::exist($argv[2])) {
+            if (\Core\Mount::exists($argv[2])) {
                 $command = new \Command\Backup();
                 $command->setKey('name', $argv[2]);
                 $command->setKey('user', $user);
@@ -67,7 +67,7 @@ switch ($argv[1]) {
                         '* %fraction% KB [%bar%] %percent%', '=>', ' ', 100, 1
                     )
                 );
-                $command->setKey('db', new \Core\Database());
+                $command->setKey('db', new \Core\Database($argv[2]));
             } else {
                 die("Mount '{$argv[2]}' does not exist");
             }
@@ -77,7 +77,7 @@ switch ($argv[1]) {
         break;
     case 'restore':
         if (3 === count($argv)) {
-            if (\Core\Mounts::exist($argv[2])) {
+            if (\Core\Mount::exists($argv[2])) {
                 $command = new \Command\Restore();
                 $command->setKey('name', $argv[2]);
                 $command->setKey('user', $user);
@@ -95,7 +95,7 @@ switch ($argv[1]) {
         break;
     case 'interval':
         if (4 === count($argv)) {
-            if (\Core\Mounts::exist($argv[2])) {
+            if (\Core\Mount::exists($argv[2])) {
                 $command = new \Command\Interval();
                 $command->setKey('name', $argv[2]);
                 $command->setKey('user', $user);

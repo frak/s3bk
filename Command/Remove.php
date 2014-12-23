@@ -11,7 +11,7 @@ class Remove extends \Core\Command
         );
         $name = $this->getKey('name');
         if ($res) {
-            \Core\Mounts::delete($name);
+            \Core\Mount::delete($name);
             echo "Mount point '{$name}' removed\n";
         } else {
             echo "Mount point '{$name}' not removed\n";

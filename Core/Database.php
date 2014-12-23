@@ -22,9 +22,17 @@ class Database
      */
     private $dbh;
 
-    private $ddl = 'CREATE TABLE checksums (file_key TEXT, checksum TEXT)';
+    /**
+     * @var string
+     */
+    private $ddl = 'CREATE TABLE checksums (mount TEXT, file_key TEXT, checksum TEXT)';
 
-    public function __construct()
+    /**
+     * @var string
+     */
+    private $mount;
+
+    public function __construct($mount)
     {
         $this->dbh = new \PDO(
             'sqlite:' . __DIR__ . '/../conf/checksums.db', null, null
@@ -38,6 +46,8 @@ class Database
         } catch (\Exception $e) {
             $this->dbh->exec($this->ddl);
         }
+
+        $this->mount = $mount;
     }
 
     /**
@@ -48,16 +58,16 @@ class Database
     {
         $res = $this->getChecksumFor($key);
         if (empty($res)) {
-            $sql = "INSERT INTO checksums VALUES (:path, :sum)";
+            $sql = "INSERT INTO checksums VALUES (:mount, :path, :sum)";
         } else {
-            $sql
-                = "UPDATE checksums SET checksum = :sum WHERE file_key = :path";
+            $sql = "UPDATE checksums SET checksum = :sum WHERE mount = :mount AND file_key = :path";
         }
         $sth = $this->dbh->prepare($sql);
         if (!is_object($sth)) {
             var_dump($this->dbh->errorInfo());
             die('why?');
         }
+        $sth->bindValue(':mount', $this->mount);
         $sth->bindValue(':path', $key);
         $sth->bindValue(':sum', $sum);
         $sth->execute();
@@ -70,7 +80,7 @@ class Database
      */
     public function getChecksumFor($key)
     {
-        $sql = "SELECT checksum FROM checksums WHERE file_key = :key";
+        $sql = "SELECT checksum FROM checksums WHERE mount = :mount AND file_key = :key";
         $sth = $this->dbh->prepare($sql);
         $sth->bindValue(':key', $key);
         $sth->execute();

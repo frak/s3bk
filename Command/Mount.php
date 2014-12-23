@@ -8,7 +8,7 @@ class Mount extends \Core\Command
     {
         \Core\Bucket::create($this->s3, $this->getBucketName());
         $name = $this->getKey('name');
-        \Core\Mounts::add(
+        \Core\Mount::add(
             $name, $this->getKey('path'), $this->getKey('type'),
             $this->getKey('versioned')
         );

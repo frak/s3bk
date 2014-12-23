@@ -27,13 +27,28 @@ class Backup extends \Core\Command
      */
     private $db;
 
+    /**
+     * @var int
+     */
+    private $unchangedCount = 0;
+
+    /**
+     * @var int
+     */
+    private $createdCount = 0;
+
+    /**
+     * @var int
+     */
+    private $modifiedCount = 0;
+
     public function run()
     {
-        $mount = \Core\Mounts::get($this->getKey('name'));
+        $mount = \Core\Mount::get($this->getKey('name'));
         if (!is_dir($mount->path)) {
             echo "Not mounted" . PHP_EOL;
         }
-        
+
         $this->progressBar          = $this->getKey('pbar');
         $this->progressBar->UPDATED = false;
         $this->db                   = $this->getKey('db');
@@ -62,6 +77,9 @@ class Backup extends \Core\Command
             }
             $iter->next();
         }
+        echo "Processed {$this->unchangedCount} unmodified files\n";
+        echo "Processed {$this->modifiedCount} modified files\n";
+        echo "Processed {$this->createdCount} new files\n";
         $this->prune($mount->path);
     }
 
@@ -113,7 +131,9 @@ class Backup extends \Core\Command
                     $this->db->setChecksumFor($fileName, $remoteMd5);
                 }
                 $localMd5 = md5_file($sourceFile);
-                if ($remoteMd5 !== $localMd5) {
+                if ($remoteMd5 === $localMd5) {
+                    $this->unchangedCount++;
+                } else {
                     echo "{$fileName}... modified" . PHP_EOL;
                     $this->s3->delete_object($bucket, $fileName);
                     $res = $this->s3->create_object(
@@ -123,6 +143,7 @@ class Backup extends \Core\Command
                     );
                     $this->db->setChecksumFor($fileName, md5_file($sourceFile));
                     $this->progressBar->update($this->amountDone);
+                    $this->modifiedCount++;
                     echo PHP_EOL;
                 }
             } else {
@@ -135,6 +156,7 @@ class Backup extends \Core\Command
                 $localMd5 = md5_file($sourceFile);
                 $this->db->setChecksumFor($fileName, $localMd5);
                 $this->progressBar->update($this->amountDone);
+                $this->createdCount++;
                 echo PHP_EOL;
             }
 
@@ -158,6 +180,6 @@ class Backup extends \Core\Command
         if ($delCount > 0) {
             $this->s3->batch()->send();
         }
-        echo "Deleted {$delCount} file(s)" . PHP_EOL;
+        echo "Processed {$delCount} removed files" . PHP_EOL;
     }
 }
