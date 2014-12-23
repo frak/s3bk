@@ -7,7 +7,6 @@ A command line tool to manage off-site backups onto the Amazon S3 service.  Curr
 ### System Requirements
 
 * A working PHP environment with the cURL extension installed
-* The Console_Progressbar PEAR library: `sudo pear install Console_Progressbar`
 * An Amazon AWS account, that is signed up to use S3 (For details on how to sign up for an S3 account please visit [aws.amazon.com/products](http://aws.amazon.com/products))
 
 ### Installation
@@ -54,5 +53,4 @@ Once you have done this, you are able to run the following commands:
 
 ## Planned development
 
-* Synchronised folders, a la Dropbox.
-* Unit tests - this was a scratch-an-itch project to save me Dropbox fees for what was just essentially an offsite backup.
+* Move to using the Symfony Console component
