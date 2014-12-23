@@ -25,7 +25,14 @@ class Database
     /**
      * @var string
      */
-    private $ddl = 'CREATE TABLE checksums (mount TEXT, file_key TEXT, checksum TEXT)';
+    private $ddl = <<<DDL
+BEGIN;
+    CREATE TABLE checksums (mount TEXT, file_key TEXT, checksum TEXT);
+    CREATE INDEX chk_mount ON checksums (mount);
+    CREATE INDEX chk_key ON checksums (file_key);
+COMMIT;
+DDL;
+
 
     /**
      * @var string
