@@ -25,11 +25,11 @@ class Database
     /**
      * @var string
      */
-    private $ddl = <<<DDL
+    private $ddl
+        = <<<DDL
 BEGIN;
     CREATE TABLE checksums (mount TEXT, file_key TEXT, checksum TEXT);
     CREATE INDEX chk_mount ON checksums (mount);
-    CREATE INDEX chk_key ON checksums (file_key);
 COMMIT;
 DDL;
 
@@ -38,6 +38,11 @@ DDL;
      * @var string
      */
     private $mount;
+
+    /**
+     * @var array
+     */
+    private $sums = [];
 
     public function __construct($mount)
     {
@@ -55,6 +60,16 @@ DDL;
         }
 
         $this->mount = $mount;
+
+        $sth = $this->dbh->prepare(
+            "SELECT * FROM checksums WHERE mount = :mount"
+        );
+        $sth->bindValue(":mount", $mount);
+        $sth->execute();
+        $res = $sth->fetchAll();
+        foreach ($res as $row) {
+            $this->sums[$row['file_key']] = $row['checksum'];
+        }
     }
 
     /**
@@ -87,16 +102,10 @@ DDL;
      */
     public function getChecksumFor($key)
     {
-        $sql = "SELECT checksum FROM checksums WHERE mount = :mount AND file_key = :key";
-        $sth = $this->dbh->prepare($sql);
-        $sth->bindValue(':key', $key);
-        $sth->execute();
-        $res = $sth->fetchAll();
-
-        if (empty($res)) {
+        if (!array_key_exists($key, $this->sums)) {
             return '';
-        } else {
-            return $res[0]['checksum'];
         }
+
+        return $this->sums[$key];
     }
 }
