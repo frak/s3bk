@@ -120,9 +120,28 @@ class Backup extends \Core\Command
             $bucket     = $this->getBucketName();
             $fileName   = str_replace($base, '', $name);
             $sourceFile = $name;
-            if ($this->s3->if_object_exists($bucket, $fileName)) {
-                $remoteMd5 = $this->db->getChecksumFor($fileName);
-                if (empty($remoteMd5)) {
+
+            $remoteMd5 = $this->db->getChecksumFor($fileName);
+            $localMd5  = md5_file($sourceFile);
+
+            if (!empty($remoteMd5)) {
+                if ($localMd5 !== $remoteMd5) {
+                    echo "{$fileName}... modified" . PHP_EOL;
+                    $this->s3->delete_object($bucket, $fileName);
+                    $this->s3->create_object(
+                        $bucket, $fileName, array(
+                            'fileUpload' => $sourceFile,
+                        )
+                    );
+                    $this->progressBar->update($this->amountDone);
+                    $this->db->setChecksumFor($fileName, md5_file($sourceFile));
+                    $this->modifiedCount++;
+                    echo PHP_EOL;
+                } else {
+                    $this->unchangedCount++;
+                }
+            } else {
+                if ($this->s3->if_object_exists($bucket, $fileName)) {
                     do {
                         $res = $this->s3->get_object_headers(
                             $bucket, $fileName
@@ -130,35 +149,30 @@ class Backup extends \Core\Command
                     } while (!$res->isOK());
                     $remoteMd5 = str_replace('"', '', $res->header['etag']);
                     $this->db->setChecksumFor($fileName, $remoteMd5);
-                }
-                $localMd5 = md5_file($sourceFile);
-                if ($remoteMd5 === $localMd5) {
-                    $this->unchangedCount++;
-                } else {
-                    echo "{$fileName}... modified" . PHP_EOL;
+                    echo "{$fileName}... unchecked" . PHP_EOL;
                     $this->s3->delete_object($bucket, $fileName);
-                    $res = $this->s3->create_object(
+                    $this->s3->create_object(
                         $bucket, $fileName, array(
                             'fileUpload' => $sourceFile,
                         )
                     );
-                    $this->db->setChecksumFor($fileName, md5_file($sourceFile));
                     $this->progressBar->update($this->amountDone);
+                    $this->db->setChecksumFor($fileName, md5_file($sourceFile));
                     $this->modifiedCount++;
                     echo PHP_EOL;
+                } else {
+                    echo "{$fileName}... creating" . PHP_EOL;
+                    $this->s3->create_object(
+                        $bucket, $fileName, array(
+                            'fileUpload' => $sourceFile,
+                        )
+                    );
+                    $localMd5 = md5_file($sourceFile);
+                    $this->db->setChecksumFor($fileName, $localMd5);
+                    $this->progressBar->update($this->amountDone);
+                    $this->createdCount++;
+                    echo PHP_EOL;
                 }
-            } else {
-                echo "{$fileName}... created" . PHP_EOL;
-                $res      = $this->s3->create_object(
-                    $bucket, $fileName, array(
-                        'fileUpload' => $sourceFile,
-                    )
-                );
-                $localMd5 = md5_file($sourceFile);
-                $this->db->setChecksumFor($fileName, $localMd5);
-                $this->progressBar->update($this->amountDone);
-                $this->createdCount++;
-                echo PHP_EOL;
             }
 
             return true;
