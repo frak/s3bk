@@ -47,6 +47,7 @@ class Backup extends \Core\Command
         $mount = \Core\Mount::get($this->getKey('name'));
         if (!is_dir($mount->path)) {
             echo "Not mounted" . PHP_EOL;
+            exit;
         }
 
         $this->progressBar          = $this->getKey('pbar');
