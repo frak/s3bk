@@ -1,0 +1,30 @@
+{
+  "name": "frak/s3bk",
+  "description": "A command to manage S3 backups",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Michael Davey",
+      "email": "frak.off@gmail.com"
+    }
+  ],
+  "require": {
+    "aws/aws-sdk-php": "2.7.26",
+    "symfony/console": "2.6.x",
+    "symfony/yaml": "2.6.x-dev"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.8@dev",
+    "mockery/mockery": "~0.9@dev",
+    "mikey179/vfsStream": "~1.5@dev"
+  },
+  "autoload": {
+    "psr-0": {
+      "": "src/"
+    }
+  },
+  "config": {
+    "bin-dir": "bin"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "directories": ["src", "vendor"],
+  "stub": true,
+  "main": "app/console.php",
+  "output": "s3bk.phar"
+}
