@@ -1,1 +1,4 @@
-conf/
+build/
+vendor/
+bin/
+s3bk.phar
