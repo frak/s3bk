@@ -98,4 +98,18 @@ DDL;
             return null;
         }
     }
+
+    /**
+     * Remove a mount from the store
+     *
+     * @param Mount $mount
+     *
+     * @return bool
+     */
+    public function deleteMount(Mount $mount)
+    {
+        $sth = $this->dbh->prepare('DELETE FROM mounts WHERE mount = :mount');
+        $sth->bindValue(':mount', $mount->getName());
+        return $sth->execute();
+    }
 }

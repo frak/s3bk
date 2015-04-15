@@ -41,6 +41,7 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
             ]
         );
         $sut   = new Database();
+        $this->assertEmpty($sut->fetchMounts());
         $this->assertTrue($sut->persistMount($one));
         $mounts = $sut->fetchMounts();
         $this->assertCount(1, $mounts);
@@ -50,5 +51,6 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
         $res = $sut->fetchMountByName('test');
         $this->assertInstanceOf('S3Bk\Model\Mount', $res);
         $this->assertNull($sut->fetchMountByName('not-known'));
+        $this->assertTrue($sut->deleteMount($one));
     }
 }

@@ -17,6 +17,12 @@ class MountListCommand extends Command
     {
         $this->setName('mount:list')
             ->setDescription('Lists the available mount points');
+        $this->setHelp(<<<HELP
+<comment>List defined mount points</comment>
+
+Shows a list of mount points
+HELP
+);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -32,13 +38,19 @@ class MountListCommand extends Command
         }
 
         $table = new Table($output);
-        $table->setHeaders(['Name', 'Path', 'Backup Interval']);
+        $table->setHeaders(['Name', 'Path', 'Backup Interval', 'Last Backup']);
         foreach ($mounts as $mount) {
+            if (is_null($mount->getLastBackup())){
+                $lastBackup = 'not run';
+            } else {
+                $lastBackup = $mount->getLastBackup()->format('c');
+            }
             $table->addRow(
                 [
                     $mount->getName(),
                     $mount->getPath(),
-                    (string)$mount->getInterval()
+                    (string)$mount->getInterval(),
+                    $lastBackup,
                 ]
             );
         }

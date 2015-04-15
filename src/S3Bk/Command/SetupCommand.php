@@ -45,9 +45,11 @@ HELP
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $baseDir = dirname(dirname(dirname(__DIR__)));
+        // fix this
+        $pathToPhp = '/usr/local/bin/php';
         $command
                  =
-            '* * * * * /usr/local/bin/php '.$baseDir.'/app/console.php run';
+            '* * * * * '.$pathToPhp.' '.$baseDir.'/app/console.php run';
         $regex   = '/'.
             str_replace(['*', '/', '.'], ['\\*', '\\/', '\\.'], $command).
             '/';

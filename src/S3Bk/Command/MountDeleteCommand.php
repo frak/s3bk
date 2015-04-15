@@ -31,7 +31,8 @@ class MountDeleteCommand extends Command
         $this->setHelp(<<<HELP
 <comment>Delete the S3 backup of a mount</comment>
 
-
+If the named mount has previously been backed up to S3 then it will be deleted
+recursively. The mount point will then be deleted.
 HELP
 );
     }
@@ -64,5 +65,8 @@ HELP
             );
         }
         $client->deleteBucket($bucketName);
+        if ($db->deleteMount($mount)) {
+            $output->writeln('<info>Mount point deleted</info>');
+        }
     }
 }

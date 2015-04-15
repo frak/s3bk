@@ -96,7 +96,7 @@ HELP
         }
 
         try {
-            $intervalTest = new StringableInterval($interval);
+            new StringableInterval($interval);
         } catch (\Exception $e) {
             $output->writeln(
                 '<error>'.$interval.' is not a parseable interval</error>'
