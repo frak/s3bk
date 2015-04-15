@@ -27,7 +27,7 @@ HELP
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $db = new Database();
+        $db     = new Database();
         $mounts = $db->fetchMounts();
         if (count($mounts) === 0) {
             $output->writeln(
@@ -40,7 +40,7 @@ HELP
         $table = new Table($output);
         $table->setHeaders(['Name', 'Path', 'Backup Interval', 'Last Backup']);
         foreach ($mounts as $mount) {
-            if (is_null($mount->getLastBackup())){
+            if (is_null($mount->getLastBackup())) {
                 $lastBackup = 'not run';
             } else {
                 $lastBackup = $mount->getLastBackup()->format('c');

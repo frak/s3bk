@@ -32,10 +32,10 @@ HELP
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $db = new Database();
+        $db       = new Database();
         $schedule = new Schedule($db);
-        $mounts = $schedule->getMountsToBackup();
-        foreach($mounts as $mount){
+        $mounts   = $schedule->getMountsToBackup();
+        foreach ($mounts as $mount) {
             $this->executeCommand($mount, $output);
         }
     }
@@ -51,11 +51,11 @@ HELP
     private function executeCommand(Mount $mount, OutputInterface $output)
     {
         $command = $this->getApplication()->find('mount:backup');
-        $args = [
+        $args    = [
             'command' => 'mount:backup',
-            'name'=>$mount->getName()
+            'name' => $mount->getName()
         ];
-        $input = new ArrayInput($args);
+        $input   = new ArrayInput($args);
         $command->run($input, $output);
     }
 }

@@ -29,7 +29,7 @@ DDL;
     {
         $dsn       = 'sqlite:'.$_SERVER['HOME'].'/.s3bk/s3bk.db';
         $this->dbh = new \PDO($dsn, null, null);
-        $res       = $this->dbh->query('SELECT 1 FROM checksums');
+        $res       = $this->dbh->query('SELECT 1 FROM mounts');
         if (!$res) {
             $this->dbh->exec($this->ddl);
         }
@@ -49,8 +49,23 @@ DDL;
         $sth->bindValue(':mount', $mount->getName());
         $sth->bindValue(':path', $mount->getPath());
         $sth->bindValue(':interval', (string)$mount->getInterval());
+        $res = $sth->execute();
 
-        return $sth->execute();
+        return $res;
+    }
+
+    public function updateMount(Mount $mount)
+    {
+        $sql = 'UPDATE mounts SET path=:path, interval=:interval, '.
+            'last_backup=:lastBackup WHERE mount=:mount';
+        $sth = $this->dbh->prepare($sql);
+        $sth->bindValue(':mount', $mount->getName());
+        $sth->bindValue(':path', $mount->getPath());
+        $sth->bindValue(':interval', (string)$mount->getInterval());
+        $sth->bindValue(':lastBackup', $mount->getLastBackup()->format('c'));
+        $res = $sth->execute();
+
+        return $res;
     }
 
     /**
@@ -110,6 +125,7 @@ DDL;
     {
         $sth = $this->dbh->prepare('DELETE FROM mounts WHERE mount = :mount');
         $sth->bindValue(':mount', $mount->getName());
+
         return $sth->execute();
     }
 }

@@ -70,7 +70,12 @@ class S3Bucket
      */
     public function uploadDirectory($name, $path)
     {
-        $this->s3->uploadDirectory($path, $name, null, ['debug' => true]);
+        $this->s3->uploadDirectory(
+            $path,
+            $name,
+            null,
+            ['debug' => true, 'multipart_upload_size' => 31457280]
+        );
         $iterator     = $this->s3->getIterator(
             'ListObjects',
             ['Bucket' => $name]

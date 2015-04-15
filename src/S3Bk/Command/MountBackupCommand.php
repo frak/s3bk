@@ -56,5 +56,7 @@ HELP
             $client->create($bucketName, $configuration->get('aws')['region']);
         }
         $client->uploadDirectory($bucketName, $path);
+        $mount->setLastBackup(new \DateTime());
+        $db->updateMount($mount);
     }
 }

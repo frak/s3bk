@@ -44,16 +44,13 @@ HELP
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $baseDir = dirname(dirname(dirname(__DIR__)));
-        // fix this
-        $pathToPhp = '/usr/local/bin/php';
-        $command
-                 =
-            '* * * * * '.$pathToPhp.' '.$baseDir.'/app/console.php run';
-        $regex   = '/'.
+        global $argv;
+        $pharPath = realpath($argv[0]);
+        $command  = '* * * * * '.PHP_BINARY.' '.$pharPath.' run';
+        $regex    = '/'.
             str_replace(['*', '/', '.'], ['\\*', '\\/', '\\.'], $command).
             '/';
-        $oldCron = exec('crontab -l 2>&1');
+        $oldCron  = exec('crontab -l 2>&1');
         if (preg_match($regex, $oldCron)) {
             $output->writeln('<comment>Command is already installed</comment>');
         } else {
@@ -97,6 +94,7 @@ HELP
         $tmpName = '/tmp/s3bk-'.uniqid().'.cron';
         file_put_contents($tmpName, $newCron);
         exec('crontab '.$tmpName);
+        unlink($tmpName);
         $output->writeln('<info>Command installed</info>');
     }
 

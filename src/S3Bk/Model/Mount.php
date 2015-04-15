@@ -9,6 +9,7 @@ use S3Bk\Type\StringableInterval;
  */
 class Mount
 {
+
     /** @var string The mount name */
     private $name;
 
@@ -28,8 +29,8 @@ class Mount
         $out->path     = $row['path'];
         $out->interval = new StringableInterval($row['interval']);
 
-        if (array_key_exists('lastBackup', $row)) {
-            $out->lastBackup = new \DateTime($row['lastBackup']);
+        if (array_key_exists('last_backup', $row)) {
+            $out->lastBackup = new \DateTime($row['last_backup']);
         }
 
         return $out;
