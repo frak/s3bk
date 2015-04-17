@@ -3,6 +3,7 @@
 namespace S3Bk\Command;
 
 use Aws\S3\S3Client;
+use S3Bk\Exception\MountPointDoesntExistException;
 use S3Bk\Service\Configuration;
 use S3Bk\Service\Database;
 use S3Bk\Service\S3Bucket;
@@ -42,10 +43,14 @@ HELP
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $name          = $input->getArgument('name');
-        $db            = new Database();
-        $mount         = $db->fetchMountByName($name);
-        $path          = $this->checkMount($name, $mount);
+        $name  = $input->getArgument('name');
+        $db    = new Database();
+        $mount = $db->fetchMountByName($name);
+        try {
+            $path = $this->checkMount($name, $mount);
+        } catch (MountPointDoesntExistException $e) {
+            return;
+        }
         $configuration = new Configuration();
         $builder       = new BucketNameBuilder($configuration);
         $bucketName    = $builder->getBucketName($name);
