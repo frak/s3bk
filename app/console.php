@@ -5,7 +5,7 @@ require __DIR__.'/../vendor/autoload.php';
 
 $application = new Symfony\Component\Console\Application();
 $application->setName('s3bk');
-$application->setVersion('0.1');
+$application->setVersion('@version@');
 $application->add(new S3Bk\Command\MountAddCommand());
 $application->add(new S3Bk\Command\MountBackupCommand());
 $application->add(new S3Bk\Command\MountDeleteCommand());

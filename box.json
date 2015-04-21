@@ -2,5 +2,9 @@
   "directories": ["src", "vendor"],
   "stub": true,
   "main": "app/console.php",
-  "output": "s3bk.phar"
+  "output": "s3bk.phar",
+  "algorithm": "OPENSSL",
+  "chmod": "0755",
+  "git-version": "version",
+  "key": "s3bk_rsa"
 }

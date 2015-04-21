@@ -1,3 +1,5 @@
 build/
 vendor/
 bin/
+s3bk_rsa.pub
+s3bk_rsa
