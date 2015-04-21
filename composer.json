@@ -12,7 +12,8 @@
   "require": {
     "aws/aws-sdk-php": "2.7.26",
     "symfony/console": "2.6.x",
-    "symfony/yaml": "2.6.x"
+    "symfony/yaml": "2.6.x",
+    "padraic/phar-updater": "~1.0@dev"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.8@dev",
