@@ -231,12 +231,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/padraic/phar-updater.git",
-                "reference": "dfe1d25fcf1783d85f5e3998015a65851e52bc56"
+                "reference": "15e941ce3001e62ffe2f67a48a0dd9f5978506bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/phar-updater/zipball/dfe1d25fcf1783d85f5e3998015a65851e52bc56",
-                "reference": "dfe1d25fcf1783d85f5e3998015a65851e52bc56",
+                "url": "https://api.github.com/repos/padraic/phar-updater/zipball/15e941ce3001e62ffe2f67a48a0dd9f5978506bb",
+                "reference": "15e941ce3001e62ffe2f67a48a0dd9f5978506bb",
                 "shasum": ""
             },
             "require": {
@@ -276,7 +276,7 @@
                 "self-update",
                 "update"
             ],
-            "time": "2015-04-21 12:49:52"
+            "time": "2015-04-22 11:02:43"
         },
         {
             "name": "symfony/console",
