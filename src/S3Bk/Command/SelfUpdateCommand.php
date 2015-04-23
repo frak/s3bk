@@ -24,11 +24,12 @@ class SelfUpdateCommand extends Command
     {
         $updater = new Updater();
         $updater->setPharUrl(
-            'https://github.com/frak/s3bk/blob/master/s3bk.phar'
+            'https://raw.githubusercontent.com/frak/s3bk/master/s3bk.phar'
         );
         $updater->setVersionUrl(
-            'https://github.com/frak/s3bk/blob/master/s3bk.version'
+            'https://raw.githubusercontent.com/frak/s3bk/master/s3bk.version'
         );
+
         $confDir = $_SERVER['HOME'].'/.s3bk/';
         if (is_dir($confDir)) {
             $updater->setBackupPath($confDir.'old_version.phar');
@@ -38,9 +39,9 @@ class SelfUpdateCommand extends Command
         if ($res) {
             $new = $updater->getNewVersion();
             $old = $updater->getOldVersion();
-            $output->writeln('<info>Updated from '.$old.' to '.$new.'</info>');
+            $output->writeln('Updated from <info>'.$old.'</info> to <info>'.$new.'</info>');
         } else {
-            $output->writeln('<comment>Alredy up to date</comment>');
+            $output->writeln('<comment>Already up to date</comment>');
         }
 
         return;
