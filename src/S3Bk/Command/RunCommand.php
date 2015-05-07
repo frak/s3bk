@@ -15,6 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RunCommand extends Command
 {
+    const LOCK_PORT = 45213;
+
     protected function configure()
     {
         $this->setName('run')
@@ -32,6 +34,15 @@ HELP
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        if ($socket === false) {
+            return;
+        }
+
+        if (@socket_bind($socket, '127.0.0.1', self::LOCK_PORT) === false) {
+            return;
+        }
+
         $db       = new Database();
         $schedule = new Schedule($db);
         $mounts   = $schedule->getMountsToBackup();
