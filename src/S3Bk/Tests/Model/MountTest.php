@@ -15,7 +15,7 @@ class MountTest extends \PHPUnit_Framework_TestCase
             'mount' => 'test',
             'path' => 'test/path',
             'interval' => 'PT5M',
-            'lastBackup' => '2015-04-10T12:00:00+00:00'
+            'last_backup' => '2015-04-10T12:00:00+00:00'
         ];
         $res = Mount::createFromRow($row);
         $this->assertEquals('test', $res->getName());

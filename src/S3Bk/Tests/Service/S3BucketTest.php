@@ -47,7 +47,7 @@ class S3BucketTest extends \PHPUnit_Framework_TestCase
             'vfs://test-mount',
             'test',
             null,
-            ['debug' => true]
+            ['debug' => true, 'multipart_upload_size' => 31457280]
         );
         $retval = [['Key' => 'file'], ['Key' => 'unknown-file']];
         $mockS3->shouldReceive('getIterator')

@@ -17,29 +17,30 @@ class ScheduleTest extends \PHPUnit_Framework_TestCase
         $data        = [
             Mount::createFromRow(
                 [
-                    'mount' => 'not-run',
-                    'path' => 'not-run',
+                    'mount'    => 'not-run',
+                    'path'     => 'not-run',
                     'interval' => 'PT1M',
                 ]
             ),
             Mount::createFromRow(
                 [
-                    'mount' => 'needs-run',
-                    'path' => 'needs-run',
-                    'interval' => 'PT1M',
-                    'lastBackup' => $lastRunTime->format('c'),
+                    'mount'       => 'needs-run',
+                    'path'        => 'needs-run',
+                    'interval'    => 'PT1M',
+                    'last_backup' => $lastRunTime->format('c'),
                 ]
             ),
             Mount::createFromRow(
                 [
-                    'mount' => 'has-run',
-                    'path' => 'has-run',
-                    'interval' => 'PT1H',
-                    'lastBackup' => $lastRunTime->format('c'),
+                    'mount'       => 'has-run',
+                    'path'        => 'has-run',
+                    'interval'    => 'PT1H',
+                    'last_backup' => $lastRunTime->format('c'),
                 ]
             ),
         ];
-        $mockDb      = m::mock('S3Bk\Service\Database');
+
+        $mockDb = m::mock('S3Bk\Service\Database');
         $mockDb->shouldReceive('fetchMounts')
             ->once()
             ->andReturn($data);
